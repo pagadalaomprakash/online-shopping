@@ -1,0 +1,70 @@
+package com.HMS.DAOIMPL;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
+
+import com.HMS.DAO.HMSDAO;
+import com.HMS.POJO.Staters;
+import com.HMS.POJO.User;
+import com.HMS.rowMappers.UserRowMapper;
+
+@Repository
+public class HMSDAIMPL implements HMSDAO {
+
+	@Autowired
+	JdbcTemplate template;
+	@Autowired
+	BCryptPasswordEncoder passwordEncoder;
+	public void createUser(User user) {
+		SimpleJdbcInsert insertUser = new SimpleJdbcInsert(template)
+											.withTableName("users")
+											.usingGeneratedKeyColumns("user_id");
+		Map<String, Object> args = new HashMap<String, Object>();
+		args.put("fname", user.getfName());
+		args.put("lname", user.getlName());
+		args.put("emailid", user.getEmailID());
+		args.put("password", passwordEncoder.encode(user.getPassword()));
+		args.put("mobilenumber", user.getMobileNumber());
+		args.put("address", user.getAddress());
+		args.put("role", "user");
+		insertUser.execute(args);
+	}
+	public int checkForEmail(String emailId) {
+		
+		int count  = template.queryForObject("select count(emailid) from users where emailid=?", new Object[]{emailId},Integer.class);
+		return count;
+	}
+	public boolean validateUser(String emailId, String password) {
+		int count  = template.queryForObject("select count(emailid) from users where emailid=?", new Object[]{emailId},Integer.class);
+		if(count>0){
+			String encodedPassword  = template.queryForObject("select password from users where emailid=?", new Object[]{emailId},String.class);
+			System.out.println(encodedPassword);
+			if(passwordEncoder.matches(password, encodedPassword)){
+				System.out.println("matched");
+				return true;
+			}
+		}
+		System.out.println("user not found");
+		return false;
+	}
+	public User getUserWithEmailId(String emailId) {
+		System.out.println(emailId);
+		User user = template.queryForObject("Select * from users where emailid=?",new Object[]{emailId}, new UserRowMapper());
+		
+		return user;
+	}
+	public List<Staters> getAlloStaters() {
+		
+		return null;
+	}
+	
+
+}
