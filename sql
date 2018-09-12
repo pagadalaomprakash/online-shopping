@@ -73,3 +73,20 @@ WITH (
 );
 ALTER TABLE public.users
   OWNER TO postgres;
+
+
+
+
+insert into items(item_id,item_name,price,category_id,itemtype)
+		values (default,'Full Chicken Tandoori',350.0,'1','chicken')
+insert into items(item_id,item_name,price,category_id,itemtype)
+		values (default,'Half Chicken Tandoori',200,'1','chicken')
+
+insert into items(item_id,item_name,price,category_id,itemtype)
+		values (default,'Full Chicken Grilled',350.0,'1','chicken')
+
+insert into items(item_id,item_name,price,category_id,itemtype)
+		values (default,'Half Chicken Grilled',200.0,'1','chicken')
+
+insert into items(item_id,item_name,price,category_id,itemtype)
+		values (default,'Quarter Chicken Grilled',150.0,'1','chicken')		
